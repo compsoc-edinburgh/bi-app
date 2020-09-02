@@ -136,7 +136,7 @@
               border-2 border-gray-200 rounded py-3 px-4 mb-3 leading-tight
               focus:outline-none focus:bg-white focus:border-gray-500"
             id="student-number"
-            type="email"
+            type="text"
             placeholder="s1234567" />
         </div>
         <div class="w-full px-3 mb-6">
