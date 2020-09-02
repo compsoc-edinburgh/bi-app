@@ -18,6 +18,13 @@ module.exports = {
       }
     }
   },
-
+  variants: {
+    width: ["responsive", "hover", "focus", "group-hover"],
+    height: ["responsive", "hover", "focus", "group-hover"],
+    scale: ["responsive", "hover", "focus", "active", "group-hover"],
+    textColor: ["responsive", "hover", "focus", "group-hover"],
+    fontWeight: ["responsive", "hover", "focus", "group-focus", "active"],
+    backgroundColor: ["responsive", "hover", "focus", "checked"]
+  },
   plugins: [require("@tailwindcss/typography")]
 };
