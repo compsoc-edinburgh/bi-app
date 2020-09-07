@@ -376,7 +376,7 @@
             events would you be willing to attend or organise?
           </label>
           <RadioGroup
-            name="needs-match"
+            name="events-preference"
             bind:value={eventsPreference}
             options={[{ label: 'Physical', display: 'In person' }, { label: 'Virtual', display: 'Virtual' }, { label: 'Physical or Virtual', display: 'Both' }]} />
           <p class="text-gray-600 text-xs mt-2">
