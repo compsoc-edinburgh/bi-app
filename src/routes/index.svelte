@@ -145,6 +145,21 @@
     bio;
 </script>
 
+<svelte:head>
+  <meta property="og:url" content="https://family.comp-soc.com" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="CompSoc AcFams" />
+  <meta property="og:image" content="https://family.comp-soc.com/social.png" />
+  <meta property="og:image:alt" content="CompSoc AcFams" />
+  <meta property="og:description" content="CompSoc AcFams" />
+
+  <meta name="twitter:card" content="summary" />
+
+  <meta name="twitter:url" content="https://family.comp-soc.com" />
+  <meta name="twitter:title" content="CompSoc AcFams" />
+  <meta name="twitter:description" content="CompSoc AcFams" />
+  <meta name="twitter:image" content="https://family.comp-soc.com/social.png" />
+</svelte:head>
 <main class="overflow-x-hidden">
   <h1 class="font-display text-4xl sm:text-5xl text-center text-primary mt-20">
     Ac<span class="text-gray-900">Fams</span>
