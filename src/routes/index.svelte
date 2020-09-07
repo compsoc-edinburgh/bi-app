@@ -1,17 +1,139 @@
 <script>
   import RadioGroup from "../components/RadioGroup.svelte";
+  import { flip } from "svelte/animate";
   let name;
   let email;
   let studentNumber;
-  let year;
+  let yearOfStudy;
+  let degreeProgram;
+  let spouseName;
+  let bio;
+  let eventsPreference;
   let dataConsent;
   let needsMatch;
   const years = [
-    { label: "year-2", display: "2nd" },
-    { label: "year-3", display: "3rd" },
-    { label: "year-4", display: "4th" },
-    { label: "year-5", display: "5th" }
+    { label: "2nd", display: "2nd" },
+    { label: "3rd", display: "3rd" },
+    { label: "4th", display: "4th" },
+    { label: "5th", display: "5th" }
   ];
+  const submit = async () => {
+    await fetch("https://slack-injest.compsoc.workers.dev", {
+      method: "POST",
+
+      body: JSON.stringify({
+        text: `
+*Picture*: ${picture}
+*Name*: ${name}
+*Email*: ${email}
+*Student Number*: ${studentNumber}
+*Year of Study*: ${yearOfStudy}
+*Degree Program*: ${degreeProgram}
+*Needs a spouse*: ${
+          needsMatch === "no" ? "Yes" : `No (paired with "${spouseName}")`
+        }
+*Bio*: ${bio}
+*Events*: ${eventsPreference}
+        `,
+        icon_url: picture,
+        username: name,
+        attachments: [
+          {
+            fallback: "JSON",
+            color: "good", // Can either be one of 'good', 'warning', 'danger', or any hex color code
+
+            // Fields are displayed in a table on the message
+            fields: [
+              {
+                title: "JSON", // The title may not contain markup and will be escaped for you
+                value: JSON.stringify({
+                  picture,
+                  name,
+                  email,
+                  studentNumber,
+                  yearOfStudy,
+                  degreeProgram,
+                  needsMatch: needsMatch === "no",
+                  spouseName,
+                  bio,
+                  eventsPreference
+                }),
+                short: false // Optional flag indicating whether the `value` is short enough to be displayed side-by-side with other values
+              }
+            ]
+          }
+        ]
+      })
+    });
+  };
+  let file;
+  let cls;
+  let percentage = 0;
+  let picture = "";
+  const chooseFile = (e) => {
+    cls = "border-blue-500";
+    console.log(e);
+    file.click();
+  };
+  const dropFile = (e) => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    uploadFile({ target: { files } });
+  };
+  const uploadFile = async (e) => {
+    let file = e.target.files[0];
+    if (!file) return;
+    const upload = await (
+      await fetch("https://image-worker.compsoc.workers.dev", {
+        headers: {
+          "Content-Type": file.type
+        }
+      })
+    ).json();
+    const reader = new FileReader();
+    const xhr = new XMLHttpRequest();
+    xhr.upload.addEventListener(
+      "progress",
+      (e) => {
+        if (e.lengthComputable) {
+          percentage = Math.round((e.loaded * 100) / e.total);
+          console.log(percentage);
+        }
+      },
+      false
+    );
+
+    xhr.upload.addEventListener(
+      "load",
+      (e) => {
+        percentage = 100;
+        picture = upload.access;
+      },
+      false
+    );
+    xhr.open("PUT", upload.signed);
+    xhr.setRequestHeader("x-amz-acl", "public-read");
+    xhr.setRequestHeader("Content-Type", file.type);
+    xhr.overrideMimeType(file.type);
+    reader.onload = function (evt) {
+      xhr.send(evt.target.result);
+    };
+    reader.readAsArrayBuffer(file);
+  };
+  const dragenter = (e) => {
+    console.log(e);
+    cls = "border-blue-500";
+  };
+
+  $: submissionEnabled =
+    dataConsent === "yes" &&
+    name &&
+    picture &&
+    email &&
+    studentNumber &&
+    yearOfStudy &&
+    degreeProgram &&
+    bio;
 </script>
 
 <main class="overflow-x-hidden">
@@ -39,21 +161,14 @@
         This is where students in older years ‘adopt’ freshers, and it’s a great
         way of helping the community, meeting new people, and having a good time
         together! We’re keeping it simple for now, with students in year 2 or
-        above as the parents, and freshers as the children - but from next year
-        we’ll have this year’s parents as grandparents.
-      </p>
-      <p>
-        Once we have all of you who want to get involved in, we’ll be asking you
-        to create a ‘bio’ to encourage freshers; this won’t be compulsory but it
-        will really help the scheme to take off, and we’ll even have some of our
-        committee members posting theirs to inspire you.
+        above as the parents, and freshers as the children.
       </p>
       <p>
         Anyone in CompSoc is welcome to join, and you can even propose to your
         AcFam spouse-to-be!
       </p>
       <p>
-        To sign up as a parent all you need to do is fill out this form by the <strong>7th
+        To sign up as a parent all you need to do is fill out this form by the <strong>20th
           of September<strong /></strong>
       </p>
       <p>
@@ -64,12 +179,48 @@
     </section>
     <section
       class="p-4 pt-4 lg:pt-16 max-w-2xl mx-auto w-full lg:m-0 lg:mr-auto pb-32">
-      <form
-        class="w-full"
-        data-netlify="true"
-        name="parent"
-        method="POST"
-        action="/success">
+      <form class="w-full" name="parent">
+        <div
+          class="bg-white shadow rounded-full sm:mx-auto grid h-40 w-40
+            justify-center items-center mb-6 border-white cursor-pointer {cls} relative"
+          on:click={chooseFile}
+          on:dragenter|preventDefault|stopPropagation={dragenter}
+          on:dragover|preventDefault|stopPropagation={dragenter}
+          on:dragleave|preventDefault|stopPropagation={() => (cls = '')}
+          on:drop|preventDefault|stopPropagation={dropFile}>
+          <input
+            bind:this={file}
+            on:change={uploadFile}
+            type="file"
+            accept="image/*"
+            class="hidden" />
+          <img
+            class="rounded-full w-40 h-40 object-cover"
+            src={picture || '/avatar.svg'}
+            alt="{name}'s image'"
+            on:load={() => (percentage === 100 ? setTimeout(() => (percentage = 0), 500) : null)} />
+          <div
+            class="absolute bg-blue-500 h-40 w-40 top-0 left-0 rounded-full"
+            style="transform: scale({percentage / 100}); transition: transform .2s" />
+          <div
+            class="text-white bg-gray-600 rounded-full h-10 w-10 z-10 absolute
+              bottom-0 right-0">
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </div>
+          </div>
+          <p class="text-gray-600 text-xs mt-2">We require a picture of you</p>
+        </div>
         <div class="w-full px-3 mb-6">
           <label
             class="block text-gray-700 text-lg mb-2 focus:font-bold
@@ -83,6 +234,7 @@
               focus:outline-none focus:bg-white focus:border-gray-500"
             id="name"
             type="text"
+            bind:value={name}
             placeholder="Ada Lovelace" />
         </div>
         <div class="w-full px-3 mb-6">
@@ -95,8 +247,10 @@
               focus:outline-none focus:bg-white focus:border-gray-500"
             id="email"
             type="email"
+            bind:value={email}
             placeholder="ada@lovelace.com" />
         </div>
+
         <div class="w-full px-3 mb-6">
           <label class="block text-gray-700 text-lg mb-2" for="student-number">
             What's your student number?
@@ -107,19 +261,36 @@
               focus:outline-none focus:bg-white focus:border-gray-500"
             id="student-number"
             type="text"
+            bind:value={studentNumber}
             placeholder="s1234567" />
         </div>
         <div class="w-full px-3 mb-6">
           <label class="block text-gray-700 text-lg mb-2">
             Which year will you be in <strong>September 2020</strong>?
           </label>
-          <RadioGroup name="year-select" options={years} />
+          <RadioGroup
+            name="year-select"
+            options={years}
+            bind:value={yearOfStudy} />
           <p class="text-gray-600 text-xs mt-2">
             Are you in 1st year? Sign up as an academic child at <a
               href="/children"
               rel="prefetch"
               class="text-primary">family.comp-soc.com/children</a> instead
           </p>
+        </div>
+        <div class="w-full px-3 mb-6">
+          <label class="block text-gray-700 text-lg mb-2" for="degree-program">
+            What's your degree program?
+          </label>
+          <input
+            class="appearance-none block w-full bg-gray-200 text-gray-700
+              border-2 border-gray-200 rounded py-3 px-4 mb-3 leading-tight
+              focus:outline-none focus:bg-white focus:border-gray-500"
+            id="degree-program"
+            type="text"
+            bind:value={degreeProgram}
+            placeholder="BSc Computer Science" />
         </div>
         <div class="w-full px-3 mb-6">
           <label class="block text-gray-700 text-lg mb-2">
@@ -147,7 +318,8 @@
                 focus:outline-none focus:bg-white focus:border-gray-500"
               id="spouse-name"
               type="text"
-              placeholder="Grace Hopper" />
+              bind:value={spouseName}
+              placeholder="Alan Turing" />
             <p class="text-gray-600 text-xs mt-2">
               Remember, they'll need to fill in this form as well
             </p>
@@ -166,9 +338,11 @@
               focus:outline-none focus:bg-white focus:border-gray-500
               resize-none h-32"
             id="bio"
+            bind:value={bio}
             placeholder="Hobbies, interests, academic focus etc..." />
           <p class="text-gray-600 text-xs mt-2">
-            This won't be public, it's just for our information
+            This will help us match you with a spouse and children, and it'll be
+            send to your future children to help them get to know you
           </p>
         </div>
         <div class="w-full px-3 mb-6">
@@ -179,8 +353,8 @@
           </label>
           <RadioGroup
             name="needs-match"
-            bind:value={needsMatch}
-            options={[{ label: 'in-person', display: 'In person' }, { label: 'virtual', display: 'Virtual' }, { label: 'both', display: 'Both' }]} />
+            bind:value={eventsPreference}
+            options={[{ label: 'Physical', display: 'In person' }, { label: 'Virtual', display: 'Virtual' }, { label: 'Physical or Virtual', display: 'Both' }]} />
           <p class="text-gray-600 text-xs mt-2">
             Don't worry, this isn't a final commitment &mdash; if your
             circumstances change just let us know
@@ -192,30 +366,35 @@
             We'll store your data for the duration of the academic families
             program this year
           </p>
-          <h4>Your name, email and student number</h4>
+          <h4>Your name, email, picture, and student number</h4>
           <ul>
             <li>
-              We'll use these to verify your CompSoc membership, contact you
-              about academic families, and to match you with your spouse
+              We'll use these to verify your CompSoc membership and contact you
+              about academic families
             </li>
             <li>
-              We'll also provide your <strong>name</strong> and <strong>email</strong>
-              to your academic child (or children) once matched
+              We'll also provide your <strong>name</strong>, <strong>email</strong>,
+              and <strong>picture</strong> to your academic child (or children) once
+              matched
             </li>
             <li>
               We won't use your details to send marketing emails, or any other
               emails unrelated to academic families
             </li>
           </ul>
-          <h4>Your year of study and other information you've provided us</h4>
+          <h4>
+            Your year of study, degree program and other information you've
+            provided us
+          </h4>
           <ul>
             <li>
               We'll use this information to help us match you with a spouse,
               and/or children
             </li>
             <li>
-              This won't be provided to your academic children &mdash; you'll
-              have an opportunity at a later stage to provide a bio for them
+              Your <strong>degree program</strong>, <strong>year of study</strong>,
+              and <strong>bio</strong> will also be provided to your future academic
+              children to help them get to know you
             </li>
           </ul>
           <h4>Your rights</h4>
@@ -251,8 +430,9 @@
         <div class="w-full px-3 mb-6 mt-8 flex">
           <button
             type="submit"
-            disabled={dataConsent !== 'yes'}
-            class="{dataConsent !== 'yes' ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary cursor-pointer'}
+            on:click|preventDefault={submit}
+            disabled={!submissionEnabled}
+            class="{submissionEnabled ? 'bg-primary cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}
               appearance-none block rounded py-3 px-4 leading-tight flex-grow focus:outline-none
               text-center font-bold text-white">Submit</button>
         </div>
