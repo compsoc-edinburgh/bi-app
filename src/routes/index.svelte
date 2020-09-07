@@ -1,6 +1,8 @@
 <script>
   import RadioGroup from "../components/RadioGroup.svelte";
   import { flip } from "svelte/animate";
+  import { goto } from "@sapper/app";
+  import Success from "./success.svelte";
   let name;
   let email;
   let studentNumber;
@@ -17,8 +19,11 @@
     { label: "4th", display: "4th" },
     { label: "5th", display: "5th" }
   ];
+  let submitting = false;
   const submit = async () => {
-    await fetch("https://slack-injest.compsoc.workers.dev", {
+    submitting = true;
+
+    const r = await fetch("https://slack-injest.compsoc.workers.dev", {
       method: "POST",
 
       body: JSON.stringify({
@@ -65,6 +70,10 @@
         ]
       })
     });
+    if (r.ok) {
+      submitting = false;
+      goto("/success");
+    }
   };
   let file;
   let cls;
@@ -448,3 +457,24 @@
     </section>
   </div>
 </main>
+{#if submitting}
+  <div
+    class="fixed w-full h-full top-0 left-0 bg-gray-900 bg-opacity-75 grid
+      items-center justify-center align-middle z-20">
+    <h2>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        class="w-8 h-8 inline-block text-white"
+        stroke="currentColor">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+      </svg>
+      <span class="text-2xl ml-2 align-middle text-white">Saving...</span>
+    </h2>
+  </div>
+{/if}
