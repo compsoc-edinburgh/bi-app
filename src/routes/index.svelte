@@ -156,11 +156,11 @@
       <h2 class="text-center">
         CompSoc family, we have a big announcement for you!
       </h2>
-      <p class="text-gray-600 text-sm mt-2">
+      <!-- <p class="text-gray-600 text-sm mt-2">
         Are you in 1st year? Go to <a
           href="/children"
           rel="prefetch">family.comp-soc.com/children</a> instead
-      </p>
+      </p> -->
       <p>
         We’ve been working hard to make plans for the upcoming year that
         accommodate all of you, and part of this plan is to introduce Academic
@@ -281,12 +281,12 @@
             name="year-select"
             options={years}
             bind:value={yearOfStudy} />
-          <p class="text-gray-600 text-xs mt-2">
+          <!-- <p class="text-gray-600 text-xs mt-2">
             Are you in 1st year? Sign up as an academic child at <a
               href="/children"
               rel="prefetch"
               class="text-primary">family.comp-soc.com/children</a> instead
-          </p>
+          </p> -->
         </div>
         <div class="w-full px-3 mb-6">
           <label class="block text-gray-700 text-lg mb-2" for="degree-program">
