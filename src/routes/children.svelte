@@ -6,40 +6,28 @@
   let name;
   let email;
   let studentNumber;
-  let yearOfStudy;
   let degreeProgram;
-  let spouseName;
   let bio;
   let eventsPreference;
   let dataConsent;
-  let needsMatch;
-  const years = [
-    { label: "2nd", display: "2nd" },
-    { label: "3rd", display: "3rd" },
-    { label: "4th", display: "4th" },
-    { label: "5th", display: "5th" }
-  ];
+
   let submitting = false;
   const submit = async () => {
     submitting = true;
 
-    const r = await fetch("https://slack-injest.compsoc.workers.dev", {
+    const r = await fetch("https://child-slack-injest.compsoc.workers.dev", {
       method: "POST",
 
       body: JSON.stringify({
         text: `
-*Picture*: ${picture}
-*Name*: ${name}
-*Email*: ${email}
-*Student Number*: ${studentNumber}
-*Year of Study*: ${yearOfStudy}
-*Degree Program*: ${degreeProgram}
-*Needs a spouse*: ${
-          needsMatch === "no" ? "Yes" : `No (paired with "${spouseName}")`
-        }
-*Bio*: ${bio}
-*Events*: ${eventsPreference}
-        `,
+  *Picture*: ${picture}
+  *Name*: ${name}
+  *Email*: ${email}
+  *Student Number*: ${studentNumber}
+  *Degree Program*: ${degreeProgram}
+  *Bio*: ${bio}
+  *Events*: ${eventsPreference}
+          `,
         icon_url: picture,
         username: name,
         attachments: [
@@ -56,10 +44,7 @@
                   name,
                   email,
                   studentNumber,
-                  yearOfStudy,
                   degreeProgram,
-                  needsMatch: needsMatch === "no",
-                  spouseName,
                   bio,
                   eventsPreference
                 }),
@@ -146,7 +131,7 @@
 </script>
 
 <svelte:head>
-  <meta property="og:url" content="https://family.comp-soc.com" />
+  <meta property="og:url" content="https://family.comp-soc.com/children" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="CompSoc AcFams" />
   <meta property="og:image" content="https://family.comp-soc.com/social.png" />
@@ -155,7 +140,7 @@
 
   <meta name="twitter:card" content="summary" />
 
-  <meta name="twitter:url" content="https://family.comp-soc.com" />
+  <meta name="twitter:url" content="https://family.comp-soc.com/children" />
   <meta name="twitter:title" content="CompSoc AcFams" />
   <meta name="twitter:description" content="CompSoc AcFams" />
   <meta name="twitter:image" content="https://family.comp-soc.com/social.png" />
@@ -168,18 +153,13 @@
     <section
       class="prose sm:prose-md md:prose-lg p-4 pt-16 max-w-2xl mx-auto lg:m-0
         lg:sticky lg:top-0 w-full lg:ml-auto">
-      <h2 class="text-center">
-        CompSoc family, we have a big announcement for you!
-      </h2>
-      <p class="text-gray-600 text-sm mt-2">
-        Are you in 1st year? Go to <a
-          href="/children"
-          rel="prefetch">family.comp-soc.com/children</a> instead
-      </p>
+      <h2 class="text-center">Calling all Freshers!</h2>
       <p>
-        We’ve been working hard to make plans for the upcoming year that
-        accommodate all of you, and part of this plan is to introduce Academic
-        Families!
+        You can now sign up for CompSoc AcFams! These academic families are
+        being introduced this year to help you settle into university life, and
+        to give you more opportunities to socialise with fellow students
+        (especially considering the current variations in studying
+        arrangements).
       </p>
       <p>
         This is where students in older years ‘adopt’ freshers, and it’s a great
@@ -188,17 +168,18 @@
         above as the parents, and freshers as the children.
       </p>
       <p>
-        Anyone in CompSoc is welcome to join, and you can even propose to your
-        AcFam spouse-to-be!
+        We’ve had an amazing number of aspiring academic parents sign up so far,
+        but now it’s your turn to sign up and complete your academic family.
+      </p>
+
+      <p>
+        To sign up as an AcFam child all you need to do is fill out this form by
+        the <strong>27th of September<strong />, so you've got plenty of time!
+        </strong>
       </p>
       <p>
-        To sign up as a parent all you need to do is fill out this form by the <strong>20th
-          of September<strong /></strong>
-      </p>
-      <p>
-        If you would like to ask any questions about becoming a parent or for
-        help with the form please email <a
-          href="mailto:hello@comp-soc.com">hello@comp-soc.com</a>.
+        If you would like to ask any questions or need help with the form please
+        email <a href="mailto:hello@comp-soc.com">hello@comp-soc.com</a>.
       </p>
     </section>
     <section
@@ -288,21 +269,7 @@
             bind:value={studentNumber}
             placeholder="s1234567" />
         </div>
-        <div class="w-full px-3 mb-6">
-          <label class="block text-gray-700 text-lg mb-2">
-            Which year will you be in <strong>September 2020</strong>?
-          </label>
-          <RadioGroup
-            name="year-select"
-            options={years}
-            bind:value={yearOfStudy} />
-          <p class="text-gray-600 text-xs mt-2">
-            Are you in 1st year? Sign up as an academic child at <a
-              href="/children"
-              rel="prefetch"
-              class="text-primary">family.comp-soc.com/children</a> instead
-          </p>
-        </div>
+
         <div class="w-full px-3 mb-6">
           <label class="block text-gray-700 text-lg mb-2" for="degree-program">
             What's your degree program?
@@ -316,39 +283,7 @@
             bind:value={degreeProgram}
             placeholder="BSc Computer Science" />
         </div>
-        <div class="w-full px-3 mb-6">
-          <label class="block text-gray-700 text-lg mb-2">
-            Have you already found a spouse?
-          </label>
-          <RadioGroup
-            name="needs-match"
-            bind:value={needsMatch}
-            options={[{ label: 'yes', display: 'Yes' }, { label: 'no', display: 'No' }]} />
-          <p class="text-gray-600 text-xs mt-2">
-            If you haven't found a spouse yet we'll find you a match
-          </p>
-        </div>
-        {#if needsMatch === 'yes'}
-          <div class="w-full px-3 mb-6">
-            <label
-              class="block text-gray-700 text-lg mb-2 focus:font-bold
-                active:font-bold"
-              for="spouse-name">
-              What's your spouse's name?
-            </label>
-            <input
-              class="appearance-none block w-full bg-gray-200 text-gray-700
-                border-2 border-gray-200 rounded py-3 px-4 mb-3 leading-tight
-                focus:outline-none focus:bg-white focus:border-gray-500"
-              id="spouse-name"
-              type="text"
-              bind:value={spouseName}
-              placeholder="Alan Turing" />
-            <p class="text-gray-600 text-xs mt-2">
-              Remember, they'll need to fill in this form as well
-            </p>
-          </div>
-        {/if}
+
         <div class="w-full px-3 mb-6">
           <label
             class="block text-gray-700 text-lg mb-2 focus:font-bold
@@ -365,8 +300,8 @@
             bind:value={bio}
             placeholder="Hobbies, interests, academic focus etc..." />
           <p class="text-gray-600 text-xs mt-2">
-            This will help us match you with a spouse and children, and it'll be
-            send to your future children to help them get to know you
+            This will help us match you with parents, and it'll be send to your
+            future parents to help them get to know you
           </p>
         </div>
         <div class="w-full px-3 mb-6">
@@ -398,8 +333,8 @@
             </li>
             <li>
               We'll also provide your <strong>name</strong>, <strong>email</strong>,
-              and <strong>picture</strong> to your academic child (or children) once
-              matched
+              and <strong>picture</strong> to your academic parents once matched,
+              so the can contact you
             </li>
             <li>
               We won't use your details to send marketing emails, or any other
@@ -412,13 +347,13 @@
           </h4>
           <ul>
             <li>
-              We'll use this information to help us match you with a spouse,
-              and/or children
+              We'll use this information to help us match you with academic
+              parents
             </li>
             <li>
-              Your <strong>degree program</strong>, <strong>year of study</strong>,
-              and <strong>bio</strong> will also be provided to your future academic
-              children to help them get to know you
+              Your <strong>degree program</strong> and <strong>bio</strong> will
+              also be provided to your future academic parents to help them get to
+              know you
             </li>
           </ul>
           <h4>Your rights</h4>
@@ -462,13 +397,13 @@
         </div>
       </form>
       <!-- <iframe
-        src="https://docs.google.com/forms/d/e/1FAIpQLSeTxbQA0XTukP3NuEZfb5rHCGR2EXEOtnDSYq-nZS7hBcCQ_w/viewform?embedded=true"
-        width="100%"
-        title="AcFam Parent Signup"
-        height="3000"
-        frameborder="0"
-        marginheight="0"
-        marginwidth="0">Loading…</iframe> -->
+          src="https://docs.google.com/forms/d/e/1FAIpQLSeTxbQA0XTukP3NuEZfb5rHCGR2EXEOtnDSYq-nZS7hBcCQ_w/viewform?embedded=true"
+          width="100%"
+          title="AcFam Parent Signup"
+          height="3000"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0">Loading…</iframe> -->
     </section>
   </div>
 </main>
