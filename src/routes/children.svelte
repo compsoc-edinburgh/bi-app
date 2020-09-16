@@ -334,7 +334,7 @@
             <li>
               We'll also provide your <strong>name</strong>, <strong>email</strong>,
               and <strong>picture</strong> to your academic parents once matched,
-              so the can contact you
+              so they can contact you
             </li>
             <li>
               We won't use your details to send marketing emails, or any other
