@@ -125,7 +125,6 @@
     picture &&
     email &&
     studentNumber &&
-    yearOfStudy &&
     degreeProgram &&
     bio;
 </script>
