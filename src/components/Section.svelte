@@ -1,4 +1,10 @@
 <script>
+  import md from "markdown-it";
+  import anchor from "markdown-it-anchor";
+  import mk from "@neilsustc/markdown-it-katex";
+  let mark = md({ typographer: true, html: true });
+  mark.use(mk).use(anchor);
+
   export let section;
   export let content;
   export let markdown;
@@ -8,9 +14,10 @@
   const { preloading, page: rpage, session } = stores();
   let textarea;
 
-  $: localMarkdown = markdown;
+  let localMarkdown;
   import { key } from "../data.js";
   import { getContext, onMount } from "svelte";
+  import Renderer from "markdown-it/lib/renderer";
   const { data } = getContext(key);
   let editing = false;
   let editor;
@@ -24,14 +31,28 @@
   const loadEditor = async () => {
     // Wait for editor to be mounted
     setTimeout(() => {
-      editor.set(markdown, "md");
+      editor.set(localMarkdown || markdown, "md");
     }, 0);
   };
   $: if (editing) {
     loadEditor();
   }
+  let highlight = "";
+  onMount(() => {
+    const local = sessionStorage.getItem(`${$rpage.params.slug}/${sectionID}`);
+    if (local && local != markdown) {
+      localMarkdown = local;
+      highlight = "rgba(255,255,0,0.2)";
+    } else {
+      sessionStorage.removeItem(`${$rpage.params.slug}/${sectionID}`);
+    }
+  });
   const save = async () => {
+    sessionStorage.setItem(`${$rpage.params.slug}/${sectionID}`, localMarkdown);
     console.log(sectionID);
+    editing = false;
+    highlight = "rgba(255,255,0,0.2)";
+
     fetch("https://save-section.compsoc.workers.dev", {
       method: "POST",
       headers: {
@@ -40,7 +61,8 @@
       body: JSON.stringify({
         page: $rpage.params.slug,
         section: sectionID,
-        content: localMarkdown
+        content: localMarkdown,
+        data: section
       })
     });
   };
@@ -49,7 +71,7 @@
 <section
   id={sectionID}
   data-semester={semester}
-  style={hideSection ? 'display: none' : ''}>
+  style="{hideSection ? 'display: none' : ''}; background-color: {highlight}">
   <h3>
     <span>
       {#if section.link}
@@ -103,7 +125,11 @@
     </span>
   </h3>
   {#if !editing}
-    {@html content}
+    {#if highlight}
+      <small><i>This is a preview of edits you've made. Your changes should be
+          visible for everyone within a minute or two</i></small>
+    {/if}
+    {@html localMarkdown ? mark.render(localMarkdown) : content}
   {:else}
     <CodeMirror
       bind:this={editor}

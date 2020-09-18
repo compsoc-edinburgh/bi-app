@@ -22,7 +22,7 @@ const getSections = async (slug) => {
         const { content, data } = matter(markdown);
         return {
           content: mark.render(content),
-          markdown,
+          markdown: content,
           data
         };
       })
@@ -56,7 +56,7 @@ export async function get(req, res, next) {
     JSON.stringify({
       data,
       content: mark.render(content),
-      markdown,
+      markdown: content,
       sections: parsedSections,
       allSections
     })

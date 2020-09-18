@@ -20,6 +20,7 @@ const onwarn = (warning, onwarn) =>
 
 export default {
   client: {
+    preferBuiltins: false,
     input: config.client.input(),
     output: config.client.output(),
     plugins: [
@@ -36,11 +37,13 @@ export default {
         emitCss: true,
         preprocess: [preprocess()]
       }),
+      commonjs(),
+
       resolve({
+        preferBuiltins: false,
         browser: true,
         dedupe: ["svelte"]
       }),
-      commonjs(),
 
       legacy &&
         babel({
@@ -93,10 +96,12 @@ export default {
         dev,
         preprocess: [preprocess()]
       }),
+      commonjs(),
+
       resolve({
+        preferBuiltins: false,
         dedupe: ["svelte"]
-      }),
-      commonjs()
+      })
     ],
     external: Object.keys(pkg.dependencies).concat(
       require("module").builtinModules

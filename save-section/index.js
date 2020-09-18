@@ -29,7 +29,13 @@ async function handleRequest(request) {
           "User-Agent": "Cloudflare Worker"
         },
         body: JSON.stringify({
-          content: btoa(json.content),
+          content: btoa(
+            `
+---
+${YAML.stringify(json.data)}
+---
+${json.content}`
+          ),
           encoding: "base64"
         }),
         method: "POST"
