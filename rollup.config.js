@@ -1,11 +1,14 @@
 import resolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import commonjs from "@rollup/plugin-commonjs";
+import yaml from "@rollup/plugin-yaml";
 import svelte from "rollup-plugin-svelte";
 import babel from "@rollup/plugin-babel";
 import { terser } from "rollup-plugin-terser";
 import config from "sapper/config/rollup.js";
 import pkg from "./package.json";
+import json from "@rollup/plugin-json";
+
 import preprocess from "svelte-preprocess";
 const mode = process.env.NODE_ENV;
 const dev = mode === "development";
@@ -20,6 +23,8 @@ export default {
     input: config.client.input(),
     output: config.client.output(),
     plugins: [
+      yaml(),
+      json(),
       replace({
         "process.browser": true,
         "process.env.NODE_ENV": JSON.stringify(mode)
@@ -29,11 +34,7 @@ export default {
         dev,
         hydratable: true,
         emitCss: true,
-        preprocess: [
-          preprocess({
-            postcss: true
-          })
-        ]
+        preprocess: [preprocess()]
       }),
       resolve({
         browser: true,
@@ -79,6 +80,8 @@ export default {
     input: config.server.input(),
     output: config.server.output(),
     plugins: [
+      yaml(),
+      json(),
       replace({
         "process.browser": false,
         "process.env.NODE_ENV": JSON.stringify(mode)
@@ -88,11 +91,7 @@ export default {
 
         generate: "ssr",
         dev,
-        preprocess: [
-          preprocess({
-            postcss: true
-          })
-        ]
+        preprocess: [preprocess()]
       }),
       resolve({
         dedupe: ["svelte"]

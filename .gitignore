@@ -4,3 +4,7 @@
 yarn-error.log
 /cypress/screenshots/
 /__sapper__/
+/src/data
+/src/pages
+/src/sections
+/static/img

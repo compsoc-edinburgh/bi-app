@@ -1,46 +1,654 @@
-<style global>
-  @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
-  html,
-  body,
-  #sapper {
-    height: 100%;
-    background: #fafafa;
+<script context="module">
+  export async function preload({ params, query }) {
+    // the `slug` parameter is available because
+    // this file is called [slug].svelte
+    const res = await this.fetch(`data.json`);
+    const data = await res.json();
+    if (res.status === 200) {
+      return { data };
+    } else {
+      this.error(res.status, data.message);
+    }
   }
-  body * {
-    border-color: initial;
+</script>
+
+<script>
+  export let data;
+  import { setContext } from "svelte";
+  import { key } from "../data.js";
+
+  setContext(key, {
+    data
+  });
+  const description =
+    "Welcome to Better Informatics. The student run website for students in the School of Informatics.";
+</script>
+
+<style global>
+  /*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+  article,
+  aside,
+  details,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  main,
+  nav,
+  section,
+  summary {
+    display: block;
+  }
+  audio,
+  canvas,
+  video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+  }
+  audio:not([controls]) {
+    display: none;
+    height: 0;
+  }
+  [hidden] {
+    display: none;
+  }
+  html {
+    background: #fff;
+    color: #000;
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+  html,
+  button,
+  input,
+  select,
+  textarea {
+    font-family: sans-serif;
+  }
+  body {
+    margin: 0;
+  }
+  a:focus {
+    outline: thin dotted;
+  }
+  a:active,
+  a:hover {
+    outline: 0;
+  }
+  h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+  }
+  h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+  }
+  h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+  }
+  h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+  }
+  h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+  }
+  h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+  }
+  abbr[title] {
+    border-bottom: 1px dotted;
+  }
+  b,
+  strong {
+    font-weight: bold;
+  }
+  blockquote {
+    margin: 1em 40px;
+  }
+  dfn {
+    font-style: italic;
+  }
+  hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+  }
+  mark {
+    background: #ff0;
+    color: #000;
+  }
+  p,
+  pre {
+    margin: 1em 0;
+  }
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: monospace, serif;
+    _font-family: "courier new", monospace;
+    font-size: 1em;
+  }
+  pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  q {
+    quotes: none;
+  }
+  q:before,
+  q:after {
+    content: "";
+    content: none;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub,
+  sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sup {
+    top: -0.5em;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  dl,
+  menu,
+  ol,
+  ul {
+    margin: 1em 0;
+  }
+  dd {
+    margin: 0 0 0 40px;
+  }
+  menu,
+  ol,
+  ul {
+    padding: 0 0 0 40px;
+  }
+  nav ul,
+  nav ol {
+    list-style: none;
+    list-style-image: none;
+  }
+  img {
+    border: 0;
+    -ms-interpolation-mode: bicubic;
+  }
+  svg:not(:root) {
+    overflow: hidden;
+  }
+  figure {
+    margin: 0;
+  }
+  form {
+    margin: 0;
+  }
+  fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+  }
+  legend {
+    border: 0;
+    padding: 0;
+    white-space: normal;
+    *margin-left: -7px;
+  }
+  button,
+  input,
+  select,
+  textarea {
+    font-size: 100%;
+    margin: 0;
+    vertical-align: baseline;
+    *vertical-align: middle;
+  }
+  button,
+  input {
+    line-height: normal;
+  }
+  button,
+  select {
+    text-transform: none;
+  }
+  button,
+  html input[type="button"],
+  input[type="reset"],
+  input[type="submit"] {
+    -webkit-appearance: button;
+    cursor: pointer;
+    *overflow: visible;
+  }
+  button[disabled],
+  html input[disabled] {
+    cursor: default;
+  }
+  input[type="checkbox"],
+  input[type="radio"] {
+    box-sizing: border-box;
+    padding: 0;
+    *height: 13px;
+    *width: 13px;
+  }
+  input[type="search"] {
+    -webkit-appearance: textfield;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+  }
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  button::-moz-focus-inner,
+  input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+  }
+  textarea {
+    overflow: auto;
+    vertical-align: top;
+  }
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  html,
+  button,
+  input,
+  select,
+  textarea {
+    color: #222;
+  }
+  body {
+    font-size: 1em;
+    line-height: 1.4;
+  }
+  ::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+  }
+  ::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+  }
+  hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+  }
+  img {
+    vertical-align: middle;
+  }
+  fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+  textarea {
+    resize: vertical;
+  }
+  .chromeframe {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+  }
+
+  body {
+    max-width: 960px;
+    height: 800px;
+    margin: 0 auto;
+    font-family: sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #444;
+  }
+  a {
+    color: #104491;
+    text-decoration: none;
+  }
+  a:hover {
+    color: #4e8eec;
+  }
+  blockquote {
+    border-left: 5px solid #ccc;
+    padding-left: 15px;
+    margin-left: 15px;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: normal;
+    /*text-transform: uppercase;*/
+    display: inline-block;
+    width: 100%;
+    border-bottom: 1px solid #999;
+    padding-bottom: 3px;
+    margin-bottom: 10px;
+    margin-top: 36px;
+  }
+  #menu {
+    width: 959px;
+    height: 192px;
+    background-image: url("/img/grey.png");
+  }
+
+  @media screen and (max-width: 970px) {
+    .hide-on-small {
+      visibility: hidden;
+      clear: both;
+      float: left;
+      margin: 10px auto 5px 20px;
+      width: 28%;
+      display: none;
+    }
+  }
+
+  @media screen and (min-width: 971px) {
+    .hide-on-big {
+      visibility: hidden;
+      clear: both;
+      float: left;
+      margin: 10px auto 5px 20px;
+      width: 28%;
+      display: none;
+    }
+  }
+
+  #title-small {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  #menu a {
+    width: 137px;
+    height: 192px;
+    display: block;
+    float: left;
+    text-decoration: none;
+    background-image: url("/img/color.png");
+    transition: 0.3s;
+    opacity: 0;
+  }
+
+  #menu-small {
+    text-align: center;
+  }
+
+  #menu-small a {
+    /* Make buttons appear on their own line by default */
+    /* See media query below for how we do it on one line */
+    display: block;
+
+    /* For on-same-line styling */
+    width: auto;
+
+    /* Prettify */
+    font-size: 1.2em;
+    text-align: center;
+    color: #777;
+    border: 1px solid #ddd;
+
+    /* Vertical space for each button */
+    margin-top: 10px;
+
+    /* Give the inside of the buttons a bit of space */
+    padding: 5px 10px;
+  }
+
+  @media screen and (min-width: 650px) {
+    #menu-small a {
+      display: inline-block;
+    }
+  }
+
+  #menu-small a:hover {
+    color: #104491;
+    border: 1px solid #104491;
+  }
+
+  #menu a:hover {
+    opacity: 1;
+  }
+  #menu a.active {
+    opacity: 1;
+  }
+  #btn_start {
+    background-position: 0 0;
+  }
+  #btn_inf1 {
+    background-position: -137px 0;
+  }
+  #btn_inf2 {
+    background-position: -274px 0;
+  }
+  #btn_inf3 {
+    background-position: -411px 0;
+  }
+  #btn_inf4 {
+    background-position: -548px 0;
+  }
+  #btn_inf5 {
+    background-position: -685px 0;
+  }
+  #btn_files {
+    background-position: -822px 0;
+  }
+  #title {
+    max-width: 906px;
+    height: 29px;
+    margin: 10px auto;
+    background: url("/img/betterinf-title.png");
+  }
+  #title:hover {
+    opacity: 0.5;
+  }
+  #content {
+    padding: 0px 20px 100px 20px;
+  }
+  #edit_top {
+    margin-bottom: 10px;
+  }
+  #edit_top > * {
+    margin-right: 20px;
+  }
+  #edit_top input {
+    background: 0;
+    border: 1px solid #104491;
+    font-family: "museo_sans500";
+    font-size: 18px;
+    color: #104491;
+    padding: 5px 10px;
+  }
+  #edit_top input:hover {
+    background: #7cabf1;
+  }
+  .btn {
+    display: inline-block;
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+    font-size: 1rem;
+    color: #777;
+    text-align: center;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+  .btn:hover {
+    color: #104491;
+    border: 1px solid #104491;
+  }
+  #login img {
+    transition: 2s;
+    background: white;
+  }
+  #login img:hover {
+    opacity: 0;
+  }
+  #login #hidden {
+    background: white;
+    background-image: url("/img/tower.png");
+    width: 200px;
+    height: 200px;
+    float: left;
+    margin-right: 40px;
+  }
+  .ir {
+    background-color: transparent;
+    border: 0;
+    overflow: hidden;
+    *text-indent: -9999px;
+  }
+  .ir:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 150%;
+  }
+  .hidden {
+    display: none !important;
+    visibility: hidden;
+  }
+  .visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+  .visuallyhidden.focusable:active,
+  .visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+  }
+  .invisible {
+    visibility: hidden;
+  }
+  .clearfix:before,
+  .clearfix:after {
+    content: " ";
+    display: table;
+  }
+  .clearfix:after {
+    clear: both;
+  }
+  .clearfix {
+    *zoom: 1;
+  }
+
+  ul {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-left: 20px;
+  }
+
+  .link-icon {
+    margin-left: 10px;
+  }
+
+  section > h3:first-child {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  section .link-icon,
+  section .edit-pencil {
+    color: rgba(119, 119, 119, 0.7);
+    opacity: 1;
+  }
+  /* 
+.link-icon, .edit-pencil {
+    opacity: 0;
+} */
+
+  section:hover .link-icon:hover,
+  section:hover .edit-pencil:hover {
+    color: rgba(119, 119, 119, 1);
+  }
+
+  .cs-logo {
+    opacity: 0.6;
+  }
+
+  .cs-logo:hover {
+    opacity: 1;
+  }
+
+  .hoverRow {
+    opacity: 0.4;
+    color: rgba(127, 127, 127, 1);
+  }
+
+  .hoverRow:hover {
+    opacity: 1;
+    color: black;
   }
 </style>
 
-<nav class="absolute h-16 top-0 left-0 m-2 flex flex-row items-center group">
-  <img
-    src="compsoc-profile-white-nomargin.png"
-    alt="Logo"
-    class="object-contain w-16 h-16" />
-  <svg
-    class="w-6 h-6 ml-2 transition-all transform scale-100 group-hover:scale-125
-      duration-200 ease-in-out"
-    viewBox="0 0 72 72"
-    xmlns="http://www.w3.org/2000/svg">
-    <g id="color">
-      <path
-        class="text-gray-700 group-hover:text-primary transition-colors
-          duration-200"
-        fill="currentColor"
-        d="M59.5,25c0-6.9036-5.5964-12.5-12.5-12.5c-4.7533,0-8.8861,2.6536-11,6.5598 C33.8861,15.1536,29.7533,12.5,25,12.5c-6.9036,0-12.5,5.5964-12.5,12.5c0,2.9699,1.0403,5.6942,2.7703,7.8387l-0.0043,0.0034 L36,58.5397l20.7339-25.6975l-0.0043-0.0034C58.4597,30.6942,59.5,27.9699,59.5,25z" />
-    </g>
-    <g id="line">
-      <path
-        fill="none"
-        class="text-gray-800 group-hover:text-primary"
-        stroke="currentColor"
-        stroke-linejoin="round"
-        stroke-miterlimit="10"
-        stroke-width="2"
-        d="M59.5,25 c0-6.9036-5.5964-12.5-12.5-12.5c-4.7533,0-8.8861,2.6536-11,6.5598C33.8861,15.1536,29.7533,12.5,25,12.5 c-6.9036,0-12.5,5.5964-12.5,12.5c0,2.9699,1.0403,5.6942,2.7703,7.8387l-0.0043,0.0034L36,58.5397l20.7339-25.6975l-0.0043-0.0034 C58.4597,30.6942,59.5,27.9699,59.5,25z" />
-    </g>
-  </svg>
-  <div class="ml-1 text-xl text-gray-800">you</div>
-</nav>
-<slot />
+<svelte:head>
+  <meta name="description" content={description} />
+
+  <!-- {% if (page.redirect != "") and (page.redirect != nil) %}<meta http-equiv="refresh" content="0;URL='{{ page.redirect }}'" />{% endif %} -->
+
+  <!-- <meta property="og:url" content="{{ site.url }}{{ page.url }}" /> -->
+  <meta property="og:title" content="Better Informatics" />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/img/camel-white.png" />
+
+  <link rel="icon" href="/img/favicon.ico" type="image/png" />
+
+  <title>Better Informatics</title>
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+</svelte:head>
+
+<a href="/">
+  <!-- <div id="title-small" class="hide-on-big">
+      <h1>Better Informatics {% if hasTitle == "true" %} - {{ page.title }} {% endif %}</h1>
+  </div> -->
+
+  <div id="title" class="ir hide-on-small">
+    <h1>Better Informatics</h1>
+  </div>
+</a>
+
+<div id="content">
+  <slot />
+  <div
+    style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: 4em;">
+    <a href="mailto:admin@betterinformatics.com">Send feedback</a>
+  </div>
+</div>

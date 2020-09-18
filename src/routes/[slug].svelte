@@ -2,7 +2,7 @@
   export async function preload({ params, query }) {
     // the `slug` parameter is available because
     // this file is called [slug].svelte
-    const res = await this.fetch(`start.json`);
+    const res = await this.fetch(`${params.slug}.json`);
     const data = await res.json();
     if (res.status === 200) {
       return {
@@ -45,11 +45,7 @@
     >
 </small-->
 </div>
-
 {#if frontmatter.year && frontmatter.year != 'start'}
-  <a id="sem1-btn" data-sem="1" class="btn">view semester 1</a>
-  <a id="sem2-btn" data-sem="2" class="btn">view semester 2</a>
-  <a id="all-btn" data-sem="all" class="btn">view all</a>
   {#if frontmatter.levels}
     <OtherCourses page={frontmatter} sections={nonPinned} {allSections} />
   {/if}

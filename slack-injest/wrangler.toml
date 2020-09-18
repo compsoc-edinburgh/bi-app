@@ -1,4 +1,0 @@
-name = "slack-injest"
-type = "webpack"
-account_id = "eb9cb81f644a3617d89fd00a632c63ed"
-workers_dev = true
