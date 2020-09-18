@@ -9,6 +9,7 @@
         content: data.content,
         frontmatter: data.data,
         sections: data.sections,
+        markdown: data.markdown,
         allSections: data.allSections
       };
     } else {
@@ -21,6 +22,7 @@
   export let content;
   export let frontmatter;
   export let sections;
+  export let markdown;
   export let allSections;
   import Nav from "../components/Nav.svelte";
   import Section from "../components/Section.svelte";
@@ -76,6 +78,7 @@
   <Section
     section={section.data}
     content={section.content}
+    markdown={section.markdown}
     page={frontmatter} />
 {/each}
 
@@ -90,5 +93,6 @@
   <Section
     section={section.data}
     content={section.content}
+    markdown={section.markdown}
     page={frontmatter} />
 {/each}

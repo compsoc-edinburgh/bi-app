@@ -12,6 +12,7 @@
     "@fullhuman/postcss-purgecss": "^2.3.0",
     "@rollup/plugin-json": "^4.1.0",
     "@tailwindcss/typography": "^0.2.0",
+    "codemirror": "^5.57.0",
     "compression": "^1.7.1",
     "gray-matter": "^4.0.2",
     "polka": "next",

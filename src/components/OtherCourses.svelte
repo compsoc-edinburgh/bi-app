@@ -1,5 +1,4 @@
 <script>
-  export let sections;
   export let page;
   export let allSections;
   import { key } from "../data.js";
