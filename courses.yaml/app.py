@@ -34,19 +34,35 @@ def check_euclid_url(code: str, real_url: str):
 def deep_equals(left: dict, right: dict):
     return yaml.safe_dump(left) == yaml.safe_dump(right)
 
+def acronym_from_url(url: str):
+    url_prefix = "https://course.inf.ed.ac.uk/"
+    year_acronym = url[len(url_prefix):].upper()
+    parts = year_acronym.split("-", 1)
+    if len(parts) == 2 and len(parts[0]) == 2 and parts[0].isdigit():
+        return parts[1]
+    else:
+        return year_acronym
+
+assert acronym_from_url("https://course.inf.ed.ac.uk/21-fnlp") == "FNLP"
+assert acronym_from_url("https://course.inf.ed.ac.uk/iads") == "IADS"
+assert acronym_from_url("https://course.inf.ed.ac.uk/22-nlu+") == "NLU+"
+assert acronym_from_url("https://course.inf.ed.ac.uk/22-bai-icdm") == "BAI-ICDM"
+assert acronym_from_url("https://course.inf.ed.ac.uk/bai-icdm") == "BAI-ICDM"
+assert acronym_from_url("https://course.inf.ed.ac.uk/fo-bar") == "FO-BAR"
+
 class Course(object):
 
     def __init__(self, soup):
         fields = soup.find_all("td")
         #print(fields)
-        
+
         url_elem = fields[0]
         self.name = url_elem.text
-        
+
         # get acronym from url
-        url_prefix = "https://course.inf.ed.ac.uk/"
         url_str = url_elem.find("a", href=True)["href"]
-        self.acronym = url_str[len(url_prefix):].upper()
+        self.acronym = acronym_from_url(url_str)
+        self.course_url = url_str
 
         euclid_ele = fields[1]
         self.euclid_code = euclid_ele.text
@@ -89,6 +105,7 @@ class Course(object):
             'euclid_code': self.euclid_code,
             'euclid_url': self.euclid_url,
             'acronym': self.acronym,
+            'course_url': self.course_url,
             'level': self.level,
             'credits': self.credits,
             'delivery': self.delivery,
@@ -99,9 +116,10 @@ class Course(object):
         }
 
     def __str__(self):
-        return "{name}\t\t\t\t{acronym} ({euclid_code})\t\t{delivery}\t\t{diet}\t\t{cw_exam_ratio}\t\tLevel {level}, {credits} credits".format(
+        return "{name}\t\t\t\t{acronym} ({course_url}) ({euclid_code})\t\t{delivery}\t\t{diet}\t\t{cw_exam_ratio}\t\tLevel {level}, {credits} credits".format(
             name=self.name,
             acronym=self.acronym,
+            course_url=self.course_url,
             euclid_code=self.euclid_code,
             delivery=self.delivery,
             diet=self.diet,
