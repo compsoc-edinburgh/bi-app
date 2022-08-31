@@ -1,0 +1,20 @@
+{
+  "background_color": "#ffffff",
+  "theme_color": "#d3371e",
+  "name": "CompSoc AcFams",
+  "short_name": "CompSoc AcFams",
+  "display": "minimal-ui",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "compsoc-profile-white-nomargin.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "compsoc-profile-white-nomargin.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
