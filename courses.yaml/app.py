@@ -72,15 +72,15 @@ class Course(object):
         # NOTE(qaisjp): the acronym column is sometimes wrong. ITO pls fix
         # we prefer the real acronym, though, because it has correct capitalisation (e.g IoTSSC, not IOTSSC)
         # we do this by comparing string lengths
-        sometimes_wrong_acronym = fields[2].text
+        sometimes_wrong_acronym = fields[3].text
         if sometimes_wrong_acronym.upper() == self.acronym:
             self.acronym = sometimes_wrong_acronym
 
-        self.level = int(fields[9].text)
-        self.credits = int(fields[10].text)
-        self.year = int(fields[11].text)
-        self.delivery = fields[12].text
-        self.diet = fields[13].text
+        self.level = int(fields[10].text)
+        self.credits = int(fields[11].text)
+        self.year = int(fields[12].text)
+        self.delivery = fields[13].text
+        self.diet = fields[14].text
 
         if self.delivery == "S1":
             self.delivery_ordinal = 1
@@ -91,7 +91,7 @@ class Course(object):
         else:
             self.delivery_ordinal = 4
 
-        ratio = fields[14].text
+        ratio = fields[15].text
         if ratio == "":
             self.cw_exam_ratio = None
         else:
