@@ -46,6 +46,13 @@ def acronym_from_url(url: str):
         return year_acronym
 
 
+def set_action_output(output_name: str, value: str):
+    """Sets the GitHub Action output to be used for subsequent jobs."""
+    if "GITHUB_OUTPUT" in os.environ:
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            print("{0}={1}".format(output_name, value), file=f)
+
+
 assert acronym_from_url("https://course.inf.ed.ac.uk/21-fnlp") == "FNLP"
 assert acronym_from_url("https://course.inf.ed.ac.uk/iads") == "IADS"
 assert acronym_from_url("https://course.inf.ed.ac.uk/22-nlu+") == "NLU+"
@@ -253,7 +260,7 @@ def main():
         # - https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-output-parameter
         has_changed = not deep_equals(old_data["list"], data["list"])
         has_changed_str = str(has_changed).lower()
-        print(f"::set-output name=has_changed::{has_changed_str}")
+        set_action_output("has_changed", has_changed_str)
 
         eprint(f"courses.yaml changed? {has_changed_str}")
 
