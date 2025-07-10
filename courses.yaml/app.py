@@ -7,6 +7,7 @@ from typing import Optional, Any
 import sys
 import yaml
 import datetime
+import re
 
 
 def eprint(*args, **kwargs):
@@ -168,6 +169,9 @@ class Course(object):
         )
 
 
+session_regex = re.compile(r".*drps.ed.ac.uk\/([0-9\-]*).*")
+
+
 def main():
     usock = urlopen("http://course.inf.ed.ac.uk")
 
@@ -202,7 +206,9 @@ def main():
             ):
                 if not non_conform:
                     non_conform = True
-                    print("Issue: Empty exam diets without defined cw_exam_ratio:")
+                    print(
+                        "Issue: Exam diet unspecified despite cw-ratio being None or coursework ratio < 100:"
+                    )
                     print("acronym (euclid)\t\tdelivery\t\tdiet\t\tratio")
                 print(course)
 
@@ -237,6 +243,14 @@ def main():
             courses_out[course.acronym.lower()] = course.build_fields()
 
         data = {}
+        session_match = session_regex.match(courses[0].euclid_url)
+        if session_match is None:
+            eprint(
+                "Failed to match session regex on first course URL:",
+                courses[0].euclid_url,
+            )
+            sys.exit(1)
+        data["session"] = "20" + session_match.group(1)
         data["list"] = courses_out
         data["last_update"] = now.isoformat()
 
